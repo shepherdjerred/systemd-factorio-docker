@@ -1,0 +1,23 @@
+[Unit]
+Description=Docker Factorio service
+After=docker.service
+Requires=docker.service
+
+[Service]
+User=ec2-user
+StandardInput=tty-force
+TimeoutStartSec=0
+Restart=always
+RestartSec=10
+ExecStart=/usr/bin/docker run \
+  --rm \
+  --name %n \
+  -p 34197:34197/udp \
+  -p 27015:27015/tcp \
+  --mount type=bind,source=/server/data,target=/factorio \
+  -it \
+  factoriotools/factorio
+ExecStop=/usr/bin/docker stop %n
+
+[Install]
+WantedBy=default.target
